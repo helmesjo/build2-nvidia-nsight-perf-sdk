@@ -1,0 +1,3 @@
+import libs = libnvperf%lib{nvperf}
+
+exe{driver}: {hxx cxx}{**} $libs testscript{**}

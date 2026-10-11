@@ -1,0 +1,6 @@
+$out_root/
+{
+  include libnvperf/
+}
+
+export $out_root/libnvperf/$import.target

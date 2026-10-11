@@ -1,34 +1,22 @@
-#include <sstream>
-#include <stdexcept>
+// Load the host library at runtime through nvperf_host_impl.h, as
+// NvPerfUtility expects.
+//
+#include <nvperf_host_impl.h>
 
-#include <libnvperf/nvperf.h>
+#include <NvPerfInit.h>
+#include <NvPerfCounterConfiguration.h>
+#include <NvPerfMetricsEvaluator.h>
 
 #undef NDEBUG
 #include <cassert>
 
 int main ()
 {
-  using namespace std;
-  using namespace nvperf;
+  NVPW_InitializeHost_Params p {};
+  p.structSize = NVPW_InitializeHost_Params_STRUCT_SIZE;
 
-  // Basics.
+  // The host library is only loaded if it is in the library search path.
   //
-  {
-    ostringstream o;
-    say_hello (o, "World");
-    assert (o.str () == "Hello, World!\n");
-  }
-
-  // Empty name.
-  //
-  try
-  {
-    ostringstream o;
-    say_hello (o, "");
-    assert (false);
-  }
-  catch (const invalid_argument& e)
-  {
-    assert (e.what () == string ("empty name"));
-  }
+  NVPA_Status s (NVPW_InitializeHost (&p));
+  assert (s == NVPA_STATUS_SUCCESS || s == NVPA_STATUS_NOT_LOADED);
 }

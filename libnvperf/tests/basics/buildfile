@@ -1,3 +1,19 @@
 import libs = libnvperf%lib{nvperf}
+import host = libnvperf%libs{nvperf_grfx_host}
 
-exe{driver}: {hxx cxx}{**} $libs testscript{**}
+# Make sure the executables are importable.
+#
+import gpudiag           = libnvperf%exe{GpuDiag}
+import metricsenumerator = libnvperf%exe{MetricsEnumerator}
+import monitoring        = libnvperf%exe{Monitoring}
+
+testscript{GpuDiag}@./:           test = $gpudiag
+testscript{MetricsEnumerator}@./: test = $metricsenumerator
+testscript{Monitoring}@./:        test = $monitoring
+
+./: testscript{GpuDiag}@./           $gpudiag
+./: testscript{MetricsEnumerator}@./ $metricsenumerator
+./: testscript{Monitoring}@./        $monitoring
+
+./: exe{driver}:    cxx{driver}    $libs
+./: exe{grfx-host}: cxx{grfx-host} $host
